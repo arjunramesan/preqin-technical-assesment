@@ -59,6 +59,7 @@ export default function Home(props: any) {
         Prequin Technical Assesment
       </div>
       {!props?.error && (
+        <>
         <div className="mt-8">
           <TableComponent
             columns={props?.investorTableColumns}
@@ -66,6 +67,12 @@ export default function Home(props: any) {
             redirect={true}
           ></TableComponent>
         </div>
+        {props?.investorTableData.length==0 && 
+          <div className="mt-2 text-red-500 text-center">
+            No data available.
+          </div>
+        }
+        </>
       )}
       {props?.error && (
         <div className="text-red-500 text-center mt-8">

@@ -1,19 +1,19 @@
 import {
   MaterialReactTable,
-  getMRT_RowSelectionHandler,
   useMaterialReactTable,
 } from "material-react-table";
 import { useEffect, useState } from "react";
 
 
-type TableColumn = {
-	accessorKey: string;
-	header: string;
-	size: number;
-  }
 
 function TableComponent(props:any) {
 
+	type TableColumn = {
+		accessorKey: string;
+		header: string;
+		size: number;
+	}
+	
 	var [columns, setColumns] = useState<TableColumn[]>([]);
 	const data = props?.data;
 
@@ -46,8 +46,7 @@ function TableComponent(props:any) {
 	enableDensityToggle: false,
 	enableFullScreenToggle: false,
 	enableHiding: false,
-	//clicking anywhere on the row will select it
-	muiTableBodyRowProps: ({ row, staticRowIndex, table }) => ({
+	muiTableBodyRowProps: ({ row }) => ({
 	  onClick: (event) => 
 		openRow(row.original),
 	  sx: { cursor: 'pointer' },
