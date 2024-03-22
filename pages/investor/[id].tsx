@@ -3,14 +3,25 @@ import { useState } from "react";
 
 export async function getServerSideProps(context: any) {
   const investorId = context.query.id;
+  if (!investorId) {
+    return {
+      props: {
+        investorId: null,
+        error: true,
+      },
+    };
+  }
+
   return {
     props: {
       investorId: investorId,
+      error: false,
     },
   };
 }
 
 export default function Investor(props: any) {
+
   const assetClassMapping:any = {
     pe: "Private Equity",
     pd: "Private Debt",
@@ -65,7 +76,7 @@ export default function Investor(props: any) {
 
   var [tableData, setTableData] = useState(null);
   var [loaded, setLoaded] = useState(true);
-  var [errorMessage, setErrorMessage] = useState(null);
+  var [error, setError] = useState(props?.error);
 
   async function getCommitmentDetails(assetClass: string) {
     setTableData(null);
@@ -76,9 +87,12 @@ export default function Investor(props: any) {
         "/" +
         props?.investorId
     );
+    if(res.status!= 200){
+      setError(true)
+      return
+    }
     var resJson = await res.json();
-    console.log(resJson)
-    resJson = resJson.map((item:any) => ({ ...item, ...{
+    resJson = resJson?.map((item:any) => ({ ...item, ...{
         asset_class: assetClassMapping[item['asset_class']],
         currency: item['currency'] + ' ' + currencyMap[item['currency']]
     }}))
@@ -119,6 +133,11 @@ export default function Investor(props: any) {
             data={tableData}
             redirect={false}
           ></TableComponent>
+        </div>
+      )}
+      {error && (
+        <div className="text-red-500 text-center mt-8">
+          Could not load data
         </div>
       )}
       <br></br>

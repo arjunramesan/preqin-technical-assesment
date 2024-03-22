@@ -1,17 +1,10 @@
 import TableComponent from "../components/TableComponent";
 
-
-
 export async function getServerSideProps() {
   const res = await fetch(
     process.env.NEXT_PUBLIC_API_ENDPOINT + `/api/investors`
   );
   const resJson = await res.json();
-
-  const firmIdsToFiler = [2670, 2792, 332, 3611];
-  const investorData = resJson?.filter((el: { firm_id: number }) => {
-    return firmIdsToFiler.includes(el.firm_id);
-  });
   const columnsToShow = [
     {
       display_name: "Firm ID",
@@ -34,17 +27,30 @@ export async function getServerSideProps() {
       key_name: "address",
     },
   ];
+  const firmIdsToFiler = [2670, 2792, 332, 3611];
+
+  if (!resJson || res.status != 200) {
+    return {
+      props: {
+        investorTableColumns: columnsToShow,
+        investorTableData: [],
+        error: true,
+      },
+    };
+  }
+
+  const investorData = resJson?.filter((el: { firm_id: number }) => {
+    return firmIdsToFiler.includes(el.firm_id);
+  });
 
   return {
     props: {
       investorTableColumns: columnsToShow,
       investorTableData: investorData,
+      error: false,
     },
   };
 }
-
-
-
 
 export default function Home(props: any) {
   return (
@@ -52,13 +58,20 @@ export default function Home(props: any) {
       <div className="font-bold text-lg text-center">
         Prequin Technical Assesment
       </div>
-      <div className="mt-8">
-        <TableComponent
-          columns={props?.investorTableColumns}
-          data={props?.investorTableData}
-          redirect={true}
-        ></TableComponent>
-      </div>
+      {!props?.error && (
+        <div className="mt-8">
+          <TableComponent
+            columns={props?.investorTableColumns}
+            data={props?.investorTableData}
+            redirect={true}
+          ></TableComponent>
+        </div>
+      )}
+      {props?.error && (
+        <div className="text-red-500 text-center mt-8">
+          Could not load data because of an API error.
+        </div>
+      )}
     </main>
   );
 }
