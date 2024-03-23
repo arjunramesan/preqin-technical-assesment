@@ -3,6 +3,17 @@
 @tailwind utilities;
 
 
+@layer base {
+  html {
+    --color-primary: #1B0757;
+    --color-secondary: #D10077;
+  }
+}
+
 body {
   margin:0;
+}
+
+th{
+  color: var(--color-secondary)!important;
 }

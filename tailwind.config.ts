@@ -8,7 +8,10 @@ const config: Config = {
   ],
   theme: {
     extend: {
- 
+      colors: {
+        customPrimary: 'var(--color-primary)',
+        customSecondary: 'var(--color-secondary)',
+      }
     },
   },
   plugins: [],

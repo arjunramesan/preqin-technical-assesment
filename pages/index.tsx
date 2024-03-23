@@ -1,4 +1,6 @@
-import TableComponent from "../components/TableComponent";
+import { convertDate } from "@/common-service";
+import HeaderComponent from "@/components/HeaderComponent";
+import TableComponent from "@/components/TableComponent";
 
 export async function getServerSideProps() {
   const res = await fetch(
@@ -39,9 +41,10 @@ export async function getServerSideProps() {
     };
   }
 
-  const investorData = resJson?.filter((el: { firm_id: number }) => {
+  var investorData = resJson?.filter((el: { firm_id: number }) => {
     return firmIdsToFiler.includes(el.firm_id);
   });
+  investorData = investorData.map((item:any) => ({ ...item, ...{'date_added' : convertDate(item.date_added)}}))
 
   return {
     props: {
@@ -54,13 +57,14 @@ export async function getServerSideProps() {
 
 export default function Home(props: any) {
   return (
-    <main className="max-w-screen-md m-auto pt-8">
-      <div className="font-bold text-lg text-center">
-        Prequin Technical Assesment
-      </div>
+    <>
+    <HeaderComponent></HeaderComponent>
+    <main className="max-w-[90vw] md:max-w-screen-md m-auto pt-8">
+      <div className="font-bold text-lg mt-8 text-customSecondary">Investors</div>
+      <small className="text-xs">Click on a row to view more details.</small>
       {!props?.error && (
         <>
-        <div className="mt-8">
+        <div className="mt-4 shadow-2xl">
           <TableComponent
             columns={props?.investorTableColumns}
             data={props?.investorTableData}
@@ -80,5 +84,6 @@ export default function Home(props: any) {
         </div>
       )}
     </main>
+    </>
   );
 }
