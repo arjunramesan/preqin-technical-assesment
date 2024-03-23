@@ -1,6 +1,7 @@
 function HeaderComponent(props: any) {
   return (
     <header className="bg-customPrimary text-white p-4 flex items-center justify-between flex-col md:flex-row">
+      {/* Preqin Logo */}
       <div>
         <a href="https://www.preqin.com/" className="header-menu__logo-link">
           <svg

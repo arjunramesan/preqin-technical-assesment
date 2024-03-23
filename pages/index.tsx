@@ -1,8 +1,9 @@
-import { convertDate } from "@/common-service";
-import HeaderComponent from "@/components/HeaderComponent";
-import TableComponent from "@/components/TableComponent";
+import { convertDate } from "../common-service";
+import HeaderComponent from "../components/HeaderComponent";
+import TableComponent from "../components/TableComponent";
 
 export async function getServerSideProps() {
+  // Calling investor API server side
   const res = await fetch(
     process.env.NEXT_PUBLIC_API_ENDPOINT + `/api/investors`
   );
@@ -31,6 +32,7 @@ export async function getServerSideProps() {
   ];
   const firmIdsToFiler = [2670, 2792, 332, 3611];
 
+  // Handling API error
   if (!resJson || res.status != 200) {
     return {
       props: {
@@ -41,9 +43,12 @@ export async function getServerSideProps() {
     };
   }
 
+  // Filtering data for certain IDs
   var investorData = resJson?.filter((el: { firm_id: number }) => {
     return firmIdsToFiler.includes(el.firm_id);
   });
+
+  // Converting date to human readable format
   investorData = investorData.map((item:any) => ({ ...item, ...{'date_added' : convertDate(item.date_added)}}))
 
   return {
@@ -80,7 +85,7 @@ export default function Home(props: any) {
       )}
       {props?.error && (
         <div className="text-red-500 text-center mt-8">
-          Could not load data because of an API error.
+          Could not load data because of an internal error.
         </div>
       )}
     </main>

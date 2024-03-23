@@ -1,18 +1,11 @@
 import { useState } from "react";
 import dynamic from "next/dynamic";
-import HeaderComponent from "@/components/HeaderComponent";
+import HeaderComponent from "../../components/HeaderComponent";
 const TableComponent = dynamic(() => import("../../components/TableComponent"));
 
 export async function getServerSideProps(context: any) {
+  // Fetching Investor ID from the URL
   const investorId = context.query.id;
-  if (!investorId) {
-    return {
-      props: {
-        investorId: null,
-        error: true,
-      },
-    };
-  }
 
   return {
     props: {
@@ -32,7 +25,6 @@ export default function Investor(props: any) {
     nr: "Natural Resources",
   };
   const assetClasses = ["pe", "pd", "re", "inf", "nr", "hf"];
-
   const columnsToShow = [
     {
       display_name: "Amount",
@@ -51,7 +43,6 @@ export default function Investor(props: any) {
       key_name: "firm_id",
     },
   ];
-
   const currencyMap: any = {
     USD: "$",
     EUR: "€",
@@ -80,9 +71,11 @@ export default function Investor(props: any) {
   var [error, setError] = useState(props?.error);
 
   async function getCommitmentDetails(assetClass: string) {
+    // Reseting loading text and table values.
     setTableData(null);
     setLoaded(false);
 
+    // Calling investor api to get details
     const res = await fetch(
       process.env.NEXT_PUBLIC_API_ENDPOINT +
         "/api/investor/commitment/" +
@@ -90,10 +83,16 @@ export default function Investor(props: any) {
         "/" +
         props?.investorId
     );
+
+    // Handling API error
     if (res.status != 200) {
       setError(true);
+      setLoaded(true);
       return;
     }
+
+
+    // Updating API response - asset_class and currency in a better format.
     var resJson = await res.json();
     resJson = resJson?.map((item: any) => ({
       ...item,
@@ -102,6 +101,7 @@ export default function Investor(props: any) {
         currency: item["currency"] + " " + currencyMap[item["currency"]],
       },
     }));
+
     setTableData(resJson);
     setLoaded(true);
   }
@@ -146,7 +146,7 @@ export default function Investor(props: any) {
         )}
         {error && (
           <div className="text-red-500 text-center mt-8">
-            Could not load data
+            Could not load data because of an internal error.
           </div>
         )}
         <br></br>

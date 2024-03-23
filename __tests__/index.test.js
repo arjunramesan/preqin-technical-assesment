@@ -126,7 +126,7 @@ describe("Home page empty state", () => {
 });
 
 describe("Home page error state", () => {
-    it("displays 'Could not load data because of an API error.' when there is no data", () => {
+    it("displays 'Could not load data because of an internal error.' when there is no data", () => {
         const mockData = {
             investorTableColumns: [
                 {
@@ -154,7 +154,7 @@ describe("Home page error state", () => {
             error: true,
         }
         render(<Home {...mockData} />);
-        expect(screen.getByText("Could not load data because of an API error.")).toBeInTheDocument();
+        expect(screen.getByText("Could not load data because of an internal error.")).toBeInTheDocument();
 
     });
 });
